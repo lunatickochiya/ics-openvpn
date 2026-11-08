@@ -85,6 +85,9 @@ public class AboutFragment extends Fragment implements View.OnClickListener {
 
         ver.setText(getString(R.string.version_info, name, version));
 
+        TextView buildTime = v.findViewById(R.id.build_time);
+        buildTime.setText(getString(R.string.build_time_info, BuildConfig.BUILD_TIME));
+
         TextView verO2 = v.findViewById(R.id.version_ovpn2);
         TextView verO3 = v.findViewById(R.id.version_ovpn3);
         TextView osslVer = v.findViewById(R.id.openssl_version);

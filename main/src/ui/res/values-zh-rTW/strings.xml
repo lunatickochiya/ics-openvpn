@@ -105,6 +105,7 @@
     <string name="route_not_netip">將路由 %1$s / %2$s 修正為 %3$s / %2$s</string>
     <string name="keychain_access">無法存取 Android 金鑰庫憑證。這可能是韌體更新，或自備份還原此程式/程式設定所導致。請在基本設定下，編輯 VPN 並重新選擇憑證，以重新建立存取憑證的權限。</string>
     <string name="version_info">%1$s %2$s</string>
+    <string name="build_time_info">編譯時間：%1$s</string>
     <string name="send_logfile">傳送紀錄檔案</string>
     <string name="send">傳送</string>
     <string name="ics_openvpn_log_file">ICS OpenVPN 紀錄檔案</string>

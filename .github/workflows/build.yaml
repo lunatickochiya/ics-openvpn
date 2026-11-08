@@ -75,7 +75,7 @@ jobs:
       - name: Prepare release assets
         id: release
         run: |
-          TAG=$(TZ=Asia/Shanghai date +%Y.%m.%d)
+          TAG=$(TZ=Asia/Shanghai date +%Y.%m.%d-%H%M)
           VERSION=$(grep -oP 'versionName = "\K[^"]+' main/build.gradle.kts | head -n 1)
           for abi in arm64-v8a armeabi-v7a x86 x86_64; do
             cp "main/build/outputs/apk/uiOvpn23/release/main-ui-ovpn23-${abi}-release.apk" \

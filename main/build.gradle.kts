@@ -1,6 +1,9 @@
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskProvider
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 /*
  * Copyright (c) 2012-2016 Arne Schwabe
@@ -40,6 +43,9 @@ android {
         //targetSdkPreview = "UpsideDownCake"
         versionCode = 225
         versionName = "0.7.69"
+        val buildTime = ZonedDateTime.now(ZoneId.of("Asia/Shanghai"))
+            .format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss"))
+        buildConfigField("String", "BUILD_TIME", "\"$buildTime\"")
         externalNativeBuild {
             cmake {
                 //arguments+= "-DCMAKE_VERBOSE_MAKEFILE=1"

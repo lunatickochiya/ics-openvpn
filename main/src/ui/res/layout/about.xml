@@ -25,6 +25,12 @@
                 tools:ignore="SelectableText"
                 tools:text="OpenVPN for Android 1.2.3" />
 
+        <TextView
+                android:id="@+id/build_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="编译时间：2026.11.08 20:35:12" />
+
 
         <TextView
                 android:layout_width="match_parent"

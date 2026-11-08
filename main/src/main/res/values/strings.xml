@@ -128,6 +128,7 @@
     <string name="route_not_netip">将路由 %1$s / %2$s 修正为 %3$s / %2$s</string>
     <string name="keychain_access">无法访问 Android 密钥库凭据。这可能是固件更新，或自备份还原此程序/程序设置所导致。请在基本设置下，编辑 VPN 并重新选择证书，以重新创建访问证书的权限。</string>
     <string name="version_info">%1$s %2$s</string>
+    <string name="build_time_info">编译时间：%1$s</string>
     <string name="send_logfile">发送纪录文件</string>
     <string name="send">发送</string>
     <string name="ics_openvpn_log_file">ICS OpenVPN 纪录文件</string>
