@@ -42,6 +42,10 @@ public class StatusListener implements VpnStatus.LogListener, VpnStatus.ProfileN
         @Override
         public void updateStateString(String state, String msg, int resid, ConnectionStatus
                 level, Intent intent) throws RemoteException {
+            // When a WireGuard tunnel is active, ignore teardown/state messages from the
+            // OpenVPN service that was replaced by it.
+            if (de.blinkt.openvpn.wireguard.WireGuardManager.isConnected())
+                return;
             Intent newIntent = reCreateIntent(intent);
             VpnStatus.updateStateString(state, msg, resid, level, newIntent);
         }
@@ -64,6 +68,8 @@ public class StatusListener implements VpnStatus.LogListener, VpnStatus.ProfileN
 
         @Override
         public void connectedVPN(String uuid) throws RemoteException {
+            if (de.blinkt.openvpn.wireguard.WireGuardManager.isConnected())
+                return;
             VpnStatus.setConnectedVPNProfile(uuid);
         }
 
@@ -86,8 +92,11 @@ public class StatusListener implements VpnStatus.LogListener, VpnStatus.ProfileN
             try {
                 /* Check if this a local service ... */
                 if (service.queryLocalInterface("de.blinkt.openvpn.core.IServiceStatus") == null) {
-                    // Not a local service
-                    VpnStatus.setConnectedVPNProfile(serviceStatus.getLastConnectedVPN());
+                    // Not a local service. Do not clear a WireGuard profile when the OpenVPN
+                    // service process has no active OpenVPN connection.
+                    String lastOpenVpnProfile = serviceStatus.getLastConnectedVPN();
+                    if (lastOpenVpnProfile != null)
+                        VpnStatus.setConnectedVPNProfile(lastOpenVpnProfile);
                     VpnStatus.setTrafficHistory(serviceStatus.getTrafficHistory());
                     ParcelFileDescriptor pfd = serviceStatus.registerStatusCallback(mCallback);
                     DataInputStream fd = new DataInputStream(new ParcelFileDescriptor.AutoCloseInputStream(pfd));

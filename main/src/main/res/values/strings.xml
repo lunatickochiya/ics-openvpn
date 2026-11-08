@@ -3,7 +3,24 @@
   ~ Distributed under the GNU GPL v2 with additional terms. For full terms see the file doc/LICENSE.txt
   -->
 <resources>
-    <string name="app">OpenVPN for Android</string>
+    <string name="app">OutHome</string>
+    <string name="wireguard">WireGuard</string>
+    <string name="wireguard_config_title">WireGuard configuration</string>
+    <string name="wireguard_config_hint">Paste a wg-quick configuration here ([Interface] and [Peer] sections)</string>
+    <string name="wireguard_config_save">Save</string>
+    <string name="wireguard_config_missing">WireGuard configuration is empty</string>
+    <string name="wireguard_config_invalid">Invalid WireGuard configuration: %1$s</string>
+    <string name="wireguard_import_detected">WireGuard configuration detected, skipping OpenVPN import</string>
+    <string name="wireguard_not_authorized">VPN permission was not granted</string>
+    <string name="wireguard_dns_error">Cannot resolve WireGuard endpoint: %1$s</string>
+    <string name="wireguard_tun_error">Cannot create the VPN interface</string>
+    <string name="wireguard_profile_not_found">WireGuard profile not found</string>
+    <string name="wireguard_connecting">Connecting WireGuard: %1$s</string>
+    <string name="wireguard_connected">WireGuard connected: %1$s</string>
+    <string name="wireguard_disconnecting">Disconnecting WireGuard…</string>
+    <string name="wireguard_disconnect">Disconnect</string>
+    <string name="wireguard_notification_channel">WireGuard connection</string>
+    <string name="wireguard_notification_channel_description">Shows the status of the active WireGuard tunnel</string>
     <string name="address">Server Address:</string>
     <string name="port">Server Port:</string>
     <string name="location">Location</string>

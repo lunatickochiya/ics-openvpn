@@ -37,6 +37,8 @@ import de.blinkt.openvpn.core.ProfileManager
 import de.blinkt.openvpn.fragments.Utils
 import de.blinkt.openvpn.views.FileSelectLayout
 import de.blinkt.openvpn.views.FileSelectLayout.FileSelectCallback
+import de.blinkt.openvpn.wireguard.WireGuardManager
+import com.wireguard.config.Config
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -800,12 +802,14 @@ class ConfigConverter : BaseActivity(), FileSelectCallback, View.OnClickListener
                 mProfilenameLabel.visibility = View.VISIBLE
                 mProfilename.setText(result.name)
 
-                mCompatmode.visibility = View.VISIBLE
-                mCompatmodeLabel.visibility = View.VISIBLE
+                val wireguardProfile = result.isWireguard()
+                val openVpnVisibility = if (wireguardProfile) View.GONE else View.VISIBLE
+                mCompatmode.visibility = openVpnVisibility
+                mCompatmodeLabel.visibility = openVpnVisibility
                 mCompatmode.setSelection(Utils.mapCompatVer(result.mCompatMode))
 
-                mTLSProfile.visibility = View.VISIBLE
-                mTLSProfileLabel.visibility = View.VISIBLE
+                mTLSProfile.visibility = openVpnVisibility
+                mTLSProfileLabel.visibility = openVpnVisibility
                 mMakeDefaultProfile.visibility = View.VISIBLE
                 if (initialImportMode) {
                     mMakeDefaultProfile.isChecked = true
@@ -873,9 +877,29 @@ class ConfigConverter : BaseActivity(), FileSelectCallback, View.OnClickListener
     }
 
     private fun doImport(inputStream: InputStream) {
+        val configText = inputStream.bufferedReader().use { it.readText() }
+
+        if (WireGuardManager.looksLikeConfig(configText)) {
+            try {
+                // Validate the configuration before saving it
+                Config.parse(ByteArrayInputStream(configText.toByteArray(Charsets.UTF_8)))
+            } catch (e: Exception) {
+                log(getString(R.string.wireguard_config_invalid, e.localizedMessage ?: e.toString()))
+                mResult = null
+                return
+            }
+
+            log(R.string.wireguard_import_detected)
+            val profile = VpnProfile("WireGuard")
+            profile.mUseWireguard = true
+            profile.mWireguardConfig = configText
+            mResult = profile
+            return
+        }
+
         val cp = ConfigParser()
         try {
-            val isr = InputStreamReader(inputStream)
+            val isr = StringReader(configText)
 
             cp.parseConfig(isr)
             mResult = cp.convertProfile()

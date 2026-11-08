@@ -24,6 +24,8 @@ import de.blinkt.openvpn.core.OpenVPNService;
 import de.blinkt.openvpn.core.ProfileManager;
 import de.blinkt.openvpn.core.VPNLaunchHelper;
 import de.blinkt.openvpn.core.VpnStatus;
+import de.blinkt.openvpn.wireguard.WireGuardManager;
+import de.blinkt.openvpn.wireguard.WireGuardService;
 
 
 /**
@@ -55,6 +57,10 @@ public class OpenVPNTileService extends TileService implements VpnStatus.StateLi
 
     private void clickAction(VpnProfile bootProfile) {
         if (VpnStatus.isVPNActive()) {
+            if (WireGuardManager.isConnected()) {
+                WireGuardService.stopNow(this);
+                return;
+            }
             Intent intent = new Intent(this, OpenVPNService.class);
             intent.setAction(OpenVPNService.START_SERVICE);
             bindService(intent, new ServiceConnection() {

@@ -25,6 +25,8 @@ import de.blinkt.openvpn.core.OpenVPNService;
 import de.blinkt.openvpn.core.Preferences;
 import de.blinkt.openvpn.core.ProfileManager;
 import de.blinkt.openvpn.core.VpnStatus;
+import de.blinkt.openvpn.wireguard.WireGuardManager;
+import de.blinkt.openvpn.wireguard.WireGuardService;
 
 /**
  * Created by arne on 13.10.13.
@@ -32,6 +34,7 @@ import de.blinkt.openvpn.core.VpnStatus;
 public class DisconnectVPN extends Activity implements DialogInterface.OnClickListener, DialogInterface.OnCancelListener {
     private IOpenVPNServiceInternal mService;
     private boolean disconnectPending = false;
+    private boolean mOpenVpnBound = false;
     private final ServiceConnection mConnection = new ServiceConnection() {
 
 
@@ -63,19 +66,33 @@ public class DisconnectVPN extends Activity implements DialogInterface.OnClickLi
         Intent intent = new Intent(this, OpenVPNService.class);
         intent.setAction(OpenVPNService.START_SERVICE);
         SharedPreferences prefs = Preferences.getDefaultSharedPreferences(this);
+
+        boolean wireguardConnected = WireGuardManager.isConnected();
         if (prefs.getBoolean("disableconfirmation", false)) {
             disconnectPending = true;
             Toast.makeText(this, "Disconnecting VPN", Toast.LENGTH_LONG).show();
+            if (wireguardConnected) {
+                WireGuardService.stopNow(this);
+                finish();
+                return;
+            }
         } else {
             showDisconnectDialog();
         }
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
+        if (!wireguardConnected) {
+            bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+            mOpenVpnBound = true;
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        unbindService(mConnection);
+        if (mOpenVpnBound) {
+            unbindService(mConnection);
+            mOpenVpnBound = false;
+        }
     }
 
     private void showDisconnectDialog() {
@@ -95,7 +112,9 @@ public class DisconnectVPN extends Activity implements DialogInterface.OnClickLi
     public void onClick(DialogInterface dialog, int which) {
         if (which == DialogInterface.BUTTON_POSITIVE) {
             ProfileManager.setConnectedVpnProfileDisconnected(this);
-            if (mService != null) {
+            if (WireGuardManager.isConnected()) {
+                WireGuardService.stopNow(this);
+            } else if (mService != null) {
                 try {
                     mService.stopVPN(false);
                 } catch (RemoteException e) {

@@ -56,6 +56,11 @@
                 android:exported="false"
                 android:windowSoftInputMode="stateHidden" />
 
+        <activity
+                android:name=".activities.WireGuardConfigActivity"
+                android:exported="false"
+                android:windowSoftInputMode="stateHidden" />
+
         <activity android:name=".activities.FileSelect" />
         <service
                 android:exported="true"
@@ -117,6 +122,21 @@
                 <data android:pathPattern=".*..*.ovpn" />
                 <data android:pathPattern=".*.ovpn" />
             </intent-filter>
+            <intent-filter android:label="@string/import_config">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="*/*" />
+                <data android:scheme="content" />
+                <data android:host="*" />
+                <data android:pathPattern=".*..*..*..*..*.conf" />
+                <data android:pathPattern=".*..*..*..*.conf" />
+                <data android:pathPattern=".*..*..*.conf" />
+                <data android:pathPattern=".*..*.conf" />
+                <data android:pathPattern=".*.conf" />
+            </intent-filter>
         </activity> <!-- https://commonsware.com/blog/2019/03/27/death-external-storage-stay-away-files.html -->
         <activity-alias
                 android:exported="true"
@@ -137,6 +157,21 @@
                 <data android:pathPattern=".*..*..*.ovpn" />
                 <data android:pathPattern=".*..*.ovpn" />
                 <data android:pathPattern=".*.ovpn" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="*/*" />
+                <data android:scheme="file" />
+                <data android:host="*" />
+                <data android:pathPattern=".*..*..*..*..*.conf" />
+                <data android:pathPattern=".*..*..*..*.conf" />
+                <data android:pathPattern=".*..*..*.conf" />
+                <data android:pathPattern=".*..*.conf" />
+                <data android:pathPattern=".*.conf" />
             </intent-filter>
         </activity-alias>
 

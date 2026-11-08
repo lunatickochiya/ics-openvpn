@@ -49,6 +49,8 @@ import de.blinkt.openvpn.core.OpenVPNService
 import de.blinkt.openvpn.core.ProfileManager
 import de.blinkt.openvpn.core.VpnStatus
 import de.blinkt.openvpn.fragments.ImportRemoteConfig.Companion.newInstance
+import de.blinkt.openvpn.wireguard.WireGuardManager
+import de.blinkt.openvpn.wireguard.WireGuardService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -281,6 +283,9 @@ class MinimalUI: Fragment(), VpnStatus.StateListener {
     }
 
     fun checkKeychainAccessIsMissing(vp: VpnProfile): Boolean {
+        if (vp.isWireguard()) {
+            return false
+        }
         if ((vp.mAuthenticationType != TYPE_USERPASS_KEYSTORE) && (vp.mAuthenticationType != TYPE_KEYSTORE)) {
             return false
         }
@@ -340,6 +345,10 @@ class MinimalUI: Fragment(), VpnStatus.StateListener {
         // Figure out if we should disconnect
         if (!GlobalPreferences.getForceConnected() && mLastConnectionLevel != ConnectionStatus.LEVEL_NOTCONNECTED) {
             ProfileManager.setConnectedVpnProfileDisconnected(requireContext())
+            if (WireGuardManager.isConnected()) {
+                WireGuardService.stopNow(requireContext())
+                return
+            }
             val service = mService;
             if (service != null) {
                 try {

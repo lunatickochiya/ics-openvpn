@@ -33,7 +33,9 @@ android {
     ndkVersion = "30.0.14904198"
 
     defaultConfig {
-        minSdk = 23
+        applicationId = "com.outhome"
+        // The WireGuard tunnel library requires API 24
+        minSdk = 24
         targetSdk = 37
         //targetSdkPreview = "UpsideDownCake"
         versionCode = 225
@@ -268,6 +270,7 @@ dependencies {
     // https://maven.google.com/web/index.html
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.wireguard.tunnel)
 
     uiImplementation(libs.android.view.material)
     uiImplementation(libs.androidx.activity)

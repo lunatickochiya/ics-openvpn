@@ -179,6 +179,9 @@ public class VpnProfile implements Serializable, Cloneable {
     public String mTlSCertProfile = "";
     public long mCreationDate = 0;
     public boolean mDpc1protocol = false;
+    /* WireGuard profiles store their wg-quick style configuration inline */
+    public boolean mUseWireguard = false;
+    public String mWireguardConfig = "";
 
 
     static class ChangeLogEntry implements Serializable {
@@ -309,6 +312,13 @@ public class VpnProfile implements Serializable, Cloneable {
 
     }
 
+    /**
+     * @return true if this profile is a WireGuard configuration instead of an OpenVPN profile
+     */
+    public boolean isWireguard() {
+        return mUseWireguard;
+    }
+
     // Only used for the special case of managed profiles
     public void setUUID(UUID uuid) {
         mUuid = uuid;
@@ -395,6 +405,10 @@ public class VpnProfile implements Serializable, Cloneable {
     }
 
     public String getConfigFile(Context context, boolean configForOvpn3) {
+        if (isWireguard()) {
+            return mWireguardConfig == null ? "" : mWireguardConfig;
+        }
+
         File cacheDir = context.getCacheDir();
         StringBuilder cfg = new StringBuilder();
 
@@ -1042,6 +1056,12 @@ public class VpnProfile implements Serializable, Cloneable {
 
     //! Return an error if something is wrong
     public int checkProfile(Context context, boolean useOpenVPN3) {
+        if (isWireguard()) {
+            if (TextUtils.isEmpty(mWireguardConfig))
+                return R.string.wireguard_config_missing;
+            return R.string.no_error_found;
+        }
+
         if (mAuthenticationType == TYPE_KEYSTORE || mAuthenticationType == TYPE_USERPASS_KEYSTORE || mAuthenticationType == TYPE_EXTERNAL_APP) {
             if (mAlias == null)
                 return R.string.no_keystore_cert_selected;
@@ -1204,6 +1224,9 @@ public class VpnProfile implements Serializable, Cloneable {
     }
 
     public int needUserPWInput(String transientCertOrPkcs12PW, String mTransientAuthPW) {
+        if (isWireguard())
+            return 0;
+
         if ((mAuthenticationType == TYPE_PKCS12 || mAuthenticationType == TYPE_USERPASS_PKCS12) &&
                 (mPKCS12Password == null || mPKCS12Password.equals(""))) {
             if (transientCertOrPkcs12PW == null)

@@ -656,6 +656,14 @@ public class OpenVPNService extends VpnService implements StateListener, Callbac
             return;
         }
 
+        if (vp.isWireguard()) {
+            // The service can also be started by Android's always-on VPN feature. Hand
+            // WireGuard profiles over to the WireGuard implementation.
+            de.blinkt.openvpn.wireguard.WireGuardService.start(this, vp);
+            stopSelf(startId);
+            return;
+        }
+
         if (!checkVPNPermission(vp))
             return;
 

@@ -45,6 +45,7 @@ import de.blinkt.openvpn.activities.ConfigConverter
 import de.blinkt.openvpn.activities.DisconnectVPN
 import de.blinkt.openvpn.activities.FileSelect
 import de.blinkt.openvpn.activities.VPNPreferences
+import de.blinkt.openvpn.activities.WireGuardConfigActivity
 import de.blinkt.openvpn.core.ConnectionStatus
 import de.blinkt.openvpn.core.OpenVPNService
 import de.blinkt.openvpn.core.PasswordDialogFragment.Companion.newInstance
@@ -527,7 +528,12 @@ class VPNProfileList : ListFragment(), View.OnClickListener, StateListener {
 
     private fun editVPN(profile: VpnProfile) {
         mEditProfile = profile
-        val vprefintent = Intent(getActivity(), VPNPreferences::class.java)
+        val editorClass = if (profile.isWireguard())
+            WireGuardConfigActivity::class.java
+        else
+            VPNPreferences::class.java
+
+        val vprefintent = Intent(getActivity(), editorClass)
             .putExtra(
                 getActivity()!!.getPackageName() + ".profileUUID",
                 profile.getUUID().toString()

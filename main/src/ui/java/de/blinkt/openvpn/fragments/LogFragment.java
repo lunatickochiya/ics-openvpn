@@ -58,6 +58,7 @@ import de.blinkt.openvpn.VpnProfile;
 import de.blinkt.openvpn.activities.DisconnectVPN;
 import de.blinkt.openvpn.activities.MainActivity;
 import de.blinkt.openvpn.activities.VPNPreferences;
+import de.blinkt.openvpn.activities.WireGuardConfigActivity;
 import de.blinkt.openvpn.core.ConnectionStatus;
 import de.blinkt.openvpn.core.OpenVPNManagement;
 import de.blinkt.openvpn.core.OpenVPNService;
@@ -434,7 +435,9 @@ public class LogFragment extends ListFragment implements StateListener, SeekBar.
             VpnProfile lastConnectedprofile = ProfileManager.get(getActivity(), VpnStatus.getLastConnectedVPNProfile());
 
             if (lastConnectedprofile != null) {
-                Intent vprefintent = new Intent(getActivity(), VPNPreferences.class)
+                Class<?> editorClass = lastConnectedprofile.isWireguard()
+                        ? WireGuardConfigActivity.class : VPNPreferences.class;
+                Intent vprefintent = new Intent(getActivity(), editorClass)
                         .putExtra(VpnProfile.EXTRA_PROFILEUUID, lastConnectedprofile.getUUIDString());
                 startActivityForResult(vprefintent, START_VPN_CONFIG);
             } else {

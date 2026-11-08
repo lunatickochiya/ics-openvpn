@@ -271,6 +271,10 @@ object Utils {
 
     @JvmStatic
     fun getWarningText(c:Context, vp:VpnProfile): SpannableStringBuilder {
+        if (vp.isWireguard()) {
+            return SpannableStringBuilder(c.getString(R.string.wireguard))
+        }
+
         val warnings = mutableListOf<String>()
 
         val errorId = vp.checkProfile(c)

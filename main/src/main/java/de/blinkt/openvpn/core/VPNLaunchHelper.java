@@ -101,6 +101,16 @@ public class VPNLaunchHelper {
 
 
     public static void startOpenVpn(VpnProfile startprofile, Context context, String startReason, boolean replace_running_vpn) {
+        if (startprofile.isWireguard()) {
+            de.blinkt.openvpn.wireguard.WireGuardService.start(context, startprofile);
+            return;
+        }
+
+        // An application can only have one active VPN interface. Tear down a running
+        // WireGuard tunnel before handing control over to OpenVPN.
+        if (de.blinkt.openvpn.wireguard.WireGuardManager.isConnected())
+            de.blinkt.openvpn.wireguard.WireGuardService.stopNow(context);
+
         Intent startVPN = startprofile.getStartServiceIntent(context, startReason, replace_running_vpn);
         if (startVPN != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
