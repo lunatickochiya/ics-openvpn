@@ -54,53 +54,55 @@ jobs:
           EOF
           chmod 600 ~/.gradle/gradle.properties
 
-      - name: Build signed release APKs (arm64-v8a + armeabi-v7a)
+      - name: Build signed release APKs (arm64-v8a, armeabi-v7a, x86, x86_64)
         run: ./gradlew assembleUiOvpn23Release
 
       - name: Verify APK signatures
         run: |
           APKSIGNER=$(find "$ANDROID_HOME/build-tools" -name apksigner | sort -V | tail -n 1)
-          find main/build/outputs/apk/uiOvpn23/release -name '*.apk' -print0 | while IFS= read -r -d '' apk; do
+          count=0
+          for apk in main/build/outputs/apk/uiOvpn23/release/*.apk; do
+            [ -e "$apk" ] || { echo "::error::No release APK was produced"; exit 1; }
             echo "Verifying $apk"
             "$APKSIGNER" verify --print-certs "$apk"
+            count=$((count + 1))
           done
+          if [ "$count" -ne 4 ]; then
+            echo "::error::Expected 4 APKs, found $count"
+            exit 1
+          fi
 
       - name: Prepare release assets
         id: release
         run: |
           TAG=$(TZ=Asia/Shanghai date +%Y.%m.%d)
           VERSION=$(grep -oP 'versionName = "\K[^"]+' main/build.gradle.kts | head -n 1)
-          ARM64="OutHome-${TAG}-v${VERSION}-arm64-v8a.apk"
-          ARM32="OutHome-${TAG}-v${VERSION}-armeabi-v7a.apk"
-          cp "main/build/outputs/apk/uiOvpn23/release/main-ui-ovpn23-arm64-v8a-release.apk" "$ARM64"
-          cp "main/build/outputs/apk/uiOvpn23/release/main-ui-ovpn23-armeabi-v7a-release.apk" "$ARM32"
+          for abi in arm64-v8a armeabi-v7a x86 x86_64; do
+            cp "main/build/outputs/apk/uiOvpn23/release/main-ui-ovpn23-${abi}-release.apk" \
+               "OutHome-${TAG}-v${VERSION}-${abi}.apk"
+          done
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "asset_arm64=$ARM64" >> "$GITHUB_OUTPUT"
-          echo "asset_arm32=$ARM32" >> "$GITHUB_OUTPUT"
-          echo "Releasing $ARM64 and $ARM32 with tag $TAG"
+          echo "Releasing 4 APKs with tag $TAG"
 
       - name: Upload APK artifacts
         uses: actions/upload-artifact@v4
         with:
           name: OutHome-${{ steps.release.outputs.tag }}-apks
-          path: |
-            ${{ steps.release.outputs.asset_arm64 }}
-            ${{ steps.release.outputs.asset_arm32 }}
+          path: OutHome-*-v*-*.apk
 
       - name: Publish GitHub release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ steps.release.outputs.tag }}
           VERSION: ${{ steps.release.outputs.version }}
-          ASSET_ARM64: ${{ steps.release.outputs.asset_arm64 }}
-          ASSET_ARM32: ${{ steps.release.outputs.asset_arm32 }}
         run: |
+          ASSETS="OutHome-${TAG}-v${VERSION}-*.apk"
           if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release upload "$TAG" "$ASSET_ARM64" "$ASSET_ARM32" --clobber
+            gh release upload "$TAG" $ASSETS --clobber
             gh release edit "$TAG" --title "OutHome $TAG"
           else
-            gh release create "$TAG" "$ASSET_ARM64" "$ASSET_ARM32" \
+            gh release create "$TAG" $ASSETS \
               --title "OutHome $TAG" \
               --notes "OutHome build for $TAG (commit ${GITHUB_SHA})."
           fi

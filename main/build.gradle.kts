@@ -167,10 +167,10 @@ android {
 
     splits {
         abi {
-            // Two release APKs: 64-bit ARM and 32-bit ARM.
+            // Per-ABI release APKs: ARM 64/32-bit and x86 64/32-bit.
             isEnable = true
             reset()
-            include("arm64-v8a", "armeabi-v7a")
+            include("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
             isUniversalApk = false
         }
     }
