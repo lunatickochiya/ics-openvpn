@@ -7,46 +7,46 @@
 <resources>
 	<!--  Keep the order the same as the TYPE_ constants in VPNProfile -->
     <string-array name="vpn_types">
-        <item>Certificates</item>
-        <item>PKCS12 File</item>
-        <item>Android Certificate</item>
-        <item>Username/Password</item>
-        <item>Static Keys</item>
-        <item>User/PW + Certificates</item>
-        <item>User/PW + PKCS12 </item>
-        <item>User/PW + Android</item>
-        <item>External Auth Provider</item>
+        <item>证书</item>
+        <item>PKCS12 文件</item>
+        <item>Android 证书</item>
+        <item>用户名/密码</item>
+        <item>静态密钥（Static Keys）</item>
+        <item>用户名/密码 + 证书</item>
+        <item>用户名/密码 + PKCS12</item>
+        <item>用户名/密码 + Android 证书</item>
+        <item>外部认证提供程序</item>
     </string-array>
     <string-array name="tls_directions_entries">
         <item translatable="false">tls-auth - --direction 0</item>
         <item translatable="false">tls-auth - --direction 1</item>
-        <item>tls-auth --direction not specified</item>
-        <item>Encryption (--tls-crypt)</item>
+        <item>tls-auth --direction 未指定</item>
+        <item>加密（--tls-crypt）</item>
         <item>TLS Crypt V2</item>
     </string-array>
     <string-array name="crm_entries">
-        <item>No reconnection retries</item>
-        <item>One reconnection retry</item>
-        <item>Five reconnection retries</item>
-        <item>Fifty reconnection retries</item>
-        <item>Unlimited reconnection retries</item>
+        <item>不重试重连</item>
+        <item>重试一次</item>
+        <item>重试五次</item>
+        <item>重试五十次</item>
+        <item>无限重试</item>
     </string-array>
     <string-array name="auth_retry_type">
-        <item>Disconnect, forget password</item>
-        <item>Disconnect, keep password</item>
-        <item>Ignore, retry</item>
-        <item>Retry, interactive (not supported)</item>
+        <item>断开连接，忘记密码</item>
+        <item>断开连接，保留密码</item>
+        <item>忽略并重试</item>
+        <item>重试，交互式（不支持）</item>
     </string-array>
     <string-array name="compat_mode">
-        <item>Modern defaults</item>
-        <item>OpenVPN 2.5.x peers</item>
-        <item>OpenVPN 2.4.x peers</item>
-        <item>OpenVPN 2.3.x and older peers</item>
+        <item>现代默认值</item>
+        <item>OpenVPN 2.5.x 对端</item>
+        <item>OpenVPN 2.4.x 对端</item>
+        <item>OpenVPN 2.3.x 及更早对端</item>
     </string-array>
     <string-array name="tls_profile_entries">
-        <item>insecure (not recommend, allows insecure crypto)</item>
-        <item>legacy (default)</item>
-        <item>preferred (recommended but limited compatibility)</item>
-        <item>Suite B (only NIST approved elliptic curves)</item>
+        <item>insecure（不推荐，允许不安全加密）</item>
+        <item>legacy（默认）</item>
+        <item>preferred（推荐但兼容性有限）</item>
+        <item>Suite B（仅 NIST 认可的椭圆曲线）</item>
     </string-array>
 </resources>

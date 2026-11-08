@@ -35,6 +35,7 @@ gh secret set OUTHOME_KEY_PASSWORD --body '...'
 ## Releases
 
 `.github/workflows/build.yaml` is a `workflow_dispatch` (manual) workflow. It builds
-`UiOvpn23Release`, verifies the APK signature, and publishes the APK to a GitHub
-release whose tag is the build date (`YYYY.MM.DD`, Asia/Shanghai). Running the
-workflow again on the same day updates that release and replaces the APK asset.
+two signed `UiOvpn23Release` APKs (arm64-v8a and armeabi-v7a), verifies both
+signatures, and publishes them to a GitHub release whose tag is the build date
+(`YYYY.MM.DD`, Asia/Shanghai). Running the workflow again on the same day updates
+that release and replaces the APK assets.

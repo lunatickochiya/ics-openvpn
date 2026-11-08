@@ -29,4 +29,23 @@
         <item>忽略，然後重試</item>
         <item>Retry, interactive (not supported)</item>
     </string-array>
+    <string-array name="crm_entries">
+        <item>不重試連線</item>
+        <item>重試一次</item>
+        <item>重試五次</item>
+        <item>重試五十次</item>
+        <item>無限重試</item>
+    </string-array>
+    <string-array name="compat_mode">
+        <item>現代預設值</item>
+        <item>OpenVPN 2.5.x 對端</item>
+        <item>OpenVPN 2.4.x 對端</item>
+        <item>OpenVPN 2.3.x 及更早對端</item>
+    </string-array>
+    <string-array name="tls_profile_entries">
+        <item>insecure（不建議，允許不安全加密）</item>
+        <item>legacy（預設）</item>
+        <item>preferred（建議但相容性有限）</item>
+        <item>Suite B（僅 NIST 認可的橢圓曲線）</item>
+    </string-array>
 </resources>

@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <resources>
     <plurals name="months_left">
-        <item quantity="one">One month left</item>
-        <item quantity="other">%d months left</item>
+        <item quantity="other">还剩 %d 个月</item>
     </plurals>
     <plurals name="days_left">
-        <item quantity="one">One day left</item>
-        <item quantity="other">%d days left</item>
+        <item quantity="other">还剩 %d 天</item>
     </plurals>
     <plurals name="hours_left">
-        <item quantity="one">One hour left</item>
-        <item quantity="other">%d hours left</item>
+        <item quantity="other">还剩 %d 小时</item>
     </plurals>
     <plurals name="minutes_left">
-        <item quantity="one">One minute left</item>
-        <item quantity="other">%d minutes left</item>
+        <item quantity="other">还剩 %d 分钟</item>
     </plurals>
 </resources>

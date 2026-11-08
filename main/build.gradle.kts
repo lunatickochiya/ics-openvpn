@@ -165,13 +165,13 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
     }
 
-    /* Disable due to https://issuetracker.google.com/issues/402800800 */
     splits {
         abi {
-            isEnable = false
+            // Two release APKs: 64-bit ARM and 32-bit ARM.
+            isEnable = true
             reset()
-            include("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
-            isUniversalApk = true
+            include("arm64-v8a", "armeabi-v7a")
+            isUniversalApk = false
         }
     }
 
