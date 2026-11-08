@@ -3,7 +3,7 @@
   ~ Distributed under the GNU GPL v2 with additional terms. For full terms see the file doc/LICENSE.txt
   -->
 <resources>
-    <string name="app">OutHome</string>
+    <string name="app">Kizuna</string>
     <string name="wireguard">WireGuard</string>
     <string name="wireguard_config_title">WireGuard 配置</string>
     <string name="wireguard_config_hint">在此粘贴 wg-quick 配置（包含 [Interface] 和 [Peer] 段）</string>
@@ -21,6 +21,17 @@
     <string name="wireguard_disconnect">断开连接</string>
     <string name="wireguard_notification_channel">WireGuard 连接</string>
     <string name="wireguard_notification_channel_description">显示当前 WireGuard 隧道状态</string>
+    <string name="wireguard_help">使用说明：\n1. 导入或粘贴 wg-quick 配置（包含 [Interface] 和 [Peer]）。\n2. 路由模式：默认使用配置中的 AllowedIPs；“不覆盖默认路由”会移除 0.0.0.0/0 与 ::/0，只保留配置中的其他网段；“自定义路由”仅使用下方填写的网段。\n3. 点击“选择使用 VPN 的应用”可指定仅部分应用使用 VPN，或排除部分应用。\n4. 保存后点击该配置即可连接。\n\n提示：也可以直接在配置中添加 IncludedApplications = 包名（逗号分隔）来指定应用；ExcludedApplications 用于排除应用。</string>
+    <string name="wireguard_routing_mode">路由模式</string>
+    <string name="wireguard_custom_routes_hint">自定义路由，CIDR 格式，逗号或空格分隔，例如 192.168.1.0/24, 10.0.0.0/8</string>
+    <string name="wireguard_select_apps">选择使用 VPN 的应用</string>
+    <string name="wireguard_help_button">使用说明</string>
+    <string name="wireguard_apps_all">应用范围：全部应用（可排除）</string>
+    <string name="wireguard_apps_selected">应用范围：仅选定的 %1$d 个应用</string>
+    <string name="wireguard_apps_title">选择使用 VPN 的应用</string>
+    <string name="wireguard_routes_missing">请填写自定义路由</string>
+    <string name="wireguard_routes_invalid">路由格式无效：%1$s</string>
+    <string name="wireguard_no_apps_selected">已选择“仅选定应用使用 VPN”，但没有选择任何应用</string>
     <string name="address">服务器地址：</string>
     <string name="port">服务器连接端口：</string>
     <string name="location">位置</string>
@@ -473,7 +484,7 @@
     <string name="configure">设置</string>
     <string name="extauth_not_configured">未设置外部身份验证器</string>
     <string name="faq_killswitch_title">阻止非 VPN 连接（“Killswitch”）</string>
-    <string name="faq_killswitch">人们常常希望在没有 VPN 时阻止网络连接。其他应用常把此功能包装成“Killswitch”或“无缝隧道”等营销术语。OpenVPN 和本应用提供 persist-tun 功能来实现此目的。&lt;p&gt;问题在于，应用提供的所有这些方法都只能尽力而为，并非完整解决方案。在开机、应用崩溃及其他边界情况下，应用无法确保阻止非 VPN 连接，这会给用户虚假的安全感。&lt;p&gt;&lt;b&gt;唯一&lt;/b&gt;可靠的阻止非 VPN 连接的方法是使用 Android 8.0 或更高版本，并开启“阻止无 VPN 的连接”设置。该设置位于“设置 > 网络和互联网 > 高级/VPN > OutHome > 启用始终开启 VPN、启用阻止无 VPN 的连接”。</string>
+    <string name="faq_killswitch">人们常常希望在没有 VPN 时阻止网络连接。其他应用常把此功能包装成“Killswitch”或“无缝隧道”等营销术语。OpenVPN 和本应用提供 persist-tun 功能来实现此目的。&lt;p&gt;问题在于，应用提供的所有这些方法都只能尽力而为，并非完整解决方案。在开机、应用崩溃及其他边界情况下，应用无法确保阻止非 VPN 连接，这会给用户虚假的安全感。&lt;p&gt;&lt;b&gt;唯一&lt;/b&gt;可靠的阻止非 VPN 连接的方法是使用 Android 8.0 或更高版本，并开启“阻止无 VPN 的连接”设置。该设置位于“设置 > 网络和互联网 > 高级/VPN > Kizuna > 启用始终开启 VPN、启用阻止无 VPN 的连接”。</string>
     <string name="summary_block_address_families">此选项指示 Android 在 VPN 未设置任何 IPv4 或 IPv6 地址时禁止相应协议。</string>
     <string name="title_block_address_families">如果 VPN 未使用 IPv6（或 IPv4），则阻止该协议</string>
     <string name="install_keychain">安装新证书</string>

@@ -182,6 +182,10 @@ public class VpnProfile implements Serializable, Cloneable {
     /* WireGuard profiles store their wg-quick style configuration inline */
     public boolean mUseWireguard = false;
     public String mWireguardConfig = "";
+    /* 0 = use AllowedIPs from the config, 1 = remove default routes,
+       2 = use mWireguardCustomRoutes only */
+    public int mWireguardRoutingMode = 0;
+    public String mWireguardCustomRoutes = "";
 
 
     static class ChangeLogEntry implements Serializable {
@@ -1059,6 +1063,10 @@ public class VpnProfile implements Serializable, Cloneable {
         if (isWireguard()) {
             if (TextUtils.isEmpty(mWireguardConfig))
                 return R.string.wireguard_config_missing;
+            if (mWireguardRoutingMode == 2 && TextUtils.isEmpty(mWireguardCustomRoutes))
+                return R.string.wireguard_routes_missing;
+            if (!mAllowedAppsVpnAreDisallowed && (mAllowedAppsVpn == null || mAllowedAppsVpn.isEmpty()))
+                return R.string.wireguard_no_apps_selected;
             return R.string.no_error_found;
         }
 

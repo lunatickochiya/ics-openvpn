@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   build:
-    name: "Build signed OutHome APKs"
+    name: "Build signed Kizuna APKs"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the code
@@ -30,23 +30,23 @@ jobs:
 
       - name: Decode release keystore
         env:
-          KEYSTORE_BASE64: ${{ secrets.OUTHOME_KEYSTORE_BASE64 }}
+          KEYSTORE_BASE64: ${{ secrets.KIZUNA_KEYSTORE_BASE64 }}
         run: |
           if [ -z "$KEYSTORE_BASE64" ]; then
-            echo "::error::Secret OUTHOME_KEYSTORE_BASE64 is not configured"
+            echo "::error::Secret KIZUNA_KEYSTORE_BASE64 is not configured"
             exit 1
           fi
-          echo "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/outhome-release.jks"
+          echo "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/kizuna-release.jks"
 
       - name: Configure signing
         env:
-          STORE_PASSWORD: ${{ secrets.OUTHOME_KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.OUTHOME_KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.OUTHOME_KEY_PASSWORD }}
+          STORE_PASSWORD: ${{ secrets.KIZUNA_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KIZUNA_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KIZUNA_KEY_PASSWORD }}
         run: |
           mkdir -p ~/.gradle
           cat > ~/.gradle/gradle.properties <<EOF
-          keystoreFile=$RUNNER_TEMP/outhome-release.jks
+          keystoreFile=$RUNNER_TEMP/kizuna-release.jks
           keystorePassword=$STORE_PASSWORD
           keystoreAlias=$KEY_ALIAS
           keystoreAliasPassword=$KEY_PASSWORD
@@ -79,7 +79,7 @@ jobs:
           VERSION=$(grep -oP 'versionName = "\K[^"]+' main/build.gradle.kts | head -n 1)
           for abi in arm64-v8a armeabi-v7a x86 x86_64; do
             cp "main/build/outputs/apk/uiOvpn23/release/main-ui-ovpn23-${abi}-release.apk" \
-               "OutHome-${TAG}-v${VERSION}-${abi}.apk"
+               "Kizuna-${TAG}-v${VERSION}-${abi}.apk"
           done
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
@@ -88,8 +88,8 @@ jobs:
       - name: Upload APK artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: OutHome-${{ steps.release.outputs.tag }}-apks
-          path: OutHome-*-v*-*.apk
+          name: Kizuna-${{ steps.release.outputs.tag }}-apks
+          path: Kizuna-*-v*-*.apk
 
       - name: Publish GitHub release
         env:
@@ -97,14 +97,14 @@ jobs:
           TAG: ${{ steps.release.outputs.tag }}
           VERSION: ${{ steps.release.outputs.version }}
         run: |
-          ASSETS="OutHome-${TAG}-v${VERSION}-*.apk"
+          ASSETS="Kizuna-${TAG}-v${VERSION}-*.apk"
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" $ASSETS --clobber
-            gh release edit "$TAG" --title "OutHome $TAG"
+            gh release edit "$TAG" --title "Kizuna $TAG"
           else
             gh release create "$TAG" $ASSETS \
-              --title "OutHome $TAG" \
-              --notes "OutHome build for $TAG (commit ${GITHUB_SHA})."
+              --title "Kizuna $TAG" \
+              --notes "Kizuna build for $TAG (commit ${GITHUB_SHA})."
           fi
           # Remove the old universal APK from earlier builds of this tag.
-          gh release delete-asset "$TAG" "OutHome-${TAG}-v${VERSION}.apk" --yes 2>/dev/null || true
+          gh release delete-asset "$TAG" "Kizuna-${TAG}-v${VERSION}.apk" --yes 2>/dev/null || true

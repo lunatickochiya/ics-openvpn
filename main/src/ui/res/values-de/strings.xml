@@ -4,7 +4,7 @@
   ~ Distributed under the GNU GPL v2 with additional terms. For full terms see the file doc/LICENSE.txt
   -->
 <resources>
-    <string name="app">OutHome</string>
+    <string name="app">Kizuna</string>
     <string name="address">Server:</string>
     <string name="port">Port:</string>
     <string name="location">Ort</string>

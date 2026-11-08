@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2026 OutHome contributors
+ * Copyright (c) 2026 Kizuna contributors
  * Distributed under the GNU GPL v2 with additional terms. For full terms see the file doc/LICENSE.txt
  */
 
@@ -11,10 +11,19 @@ import android.util.Log;
 import com.wireguard.android.backend.BackendException;
 import com.wireguard.android.backend.GoBackend;
 import com.wireguard.android.backend.Tunnel;
+import com.wireguard.config.BadConfigException;
 import com.wireguard.config.Config;
+import com.wireguard.config.InetNetwork;
+import com.wireguard.config.Interface;
+import com.wireguard.config.ParseException;
+import com.wireguard.config.Peer;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import de.blinkt.openvpn.R;
 import de.blinkt.openvpn.VpnProfile;
@@ -31,7 +40,7 @@ import de.blinkt.openvpn.core.VpnStatus;
 public final class WireGuardManager {
     private static final String TAG = "WireGuardManager";
     /** WireGuard interface names are limited to 15 characters */
-    public static final String TUNNEL_NAME = "outhome";
+    public static final String TUNNEL_NAME = "kizuna";
 
     private static volatile GoBackend backend;
     private static volatile Tunnel tunnel;
@@ -84,6 +93,7 @@ public final class WireGuardManager {
 
         Config config = Config.parse(new ByteArrayInputStream(
                 profile.mWireguardConfig.getBytes(StandardCharsets.UTF_8)));
+        config = applyProfileOptions(context, profile, config);
 
         if (backend == null)
             backend = new GoBackend(context.getApplicationContext());
@@ -126,6 +136,96 @@ public final class WireGuardManager {
         VpnStatus.updateStateString("CONNECTED", profile.getName(),
                 R.string.state_connected, ConnectionStatus.LEVEL_CONNECTED);
         VpnStatus.logInfo("WireGuard tunnel '" + profile.getName() + "' established");
+    }
+
+    /**
+     * Applies the per-profile route and application selections on top of the imported
+     * wg-quick configuration.
+     */
+    private static Config applyProfileOptions(Context context, VpnProfile profile, Config config)
+            throws BadConfigException, IllegalArgumentException {
+        Interface iface = config.getInterface();
+        Interface.Builder ib = new Interface.Builder()
+                .setKeyPair(iface.getKeyPair())
+                .addAddresses(iface.getAddresses())
+                .addDnsServers(iface.getDnsServers())
+                .addDnsSearchDomains(iface.getDnsSearchDomains());
+
+        if (iface.getListenPort().isPresent())
+            ib.setListenPort(iface.getListenPort().get());
+        if (iface.getMtu().isPresent())
+            ib.setMtu(iface.getMtu().get());
+
+        // Per-application selection. If the user did not configure a selection, keep
+        // IncludedApplications/ExcludedApplications from the imported configuration.
+        boolean appFilter = !profile.mAllowedAppsVpnAreDisallowed
+                || (profile.mAllowedAppsVpn != null && !profile.mAllowedAppsVpn.isEmpty());
+        if (appFilter) {
+            if (profile.mAllowedAppsVpnAreDisallowed) {
+                ib.excludeApplications(profile.mAllowedAppsVpn);
+            } else {
+                if (profile.mAllowedAppsVpn == null || profile.mAllowedAppsVpn.isEmpty())
+                    throw new IllegalArgumentException(
+                            context.getString(R.string.wireguard_no_apps_selected));
+                ib.includeApplications(profile.mAllowedAppsVpn);
+            }
+        } else {
+            ib.includeApplications(iface.getIncludedApplications());
+            ib.excludeApplications(iface.getExcludedApplications());
+        }
+
+        List<InetNetwork> customRoutes = profile.mWireguardRoutingMode == 2
+                ? parseRoutes(context, profile.mWireguardCustomRoutes)
+                : new ArrayList<>();
+
+        Config.Builder cb = new Config.Builder().setInterface(ib.build());
+        for (Peer peer : config.getPeers()) {
+            Peer.Builder pb = new Peer.Builder().setPublicKey(peer.getPublicKey());
+
+            Set<InetNetwork> allowedIps;
+            if (profile.mWireguardRoutingMode == 2) {
+                if (customRoutes.isEmpty())
+                    throw new IllegalArgumentException(
+                            context.getString(R.string.wireguard_routes_missing));
+                allowedIps = new LinkedHashSet<>(customRoutes);
+            } else if (profile.mWireguardRoutingMode == 1) {
+                allowedIps = new LinkedHashSet<>();
+                for (InetNetwork network : peer.getAllowedIps()) {
+                    if (network.getMask() != 0)
+                        allowedIps.add(network);
+                }
+            } else {
+                allowedIps = peer.getAllowedIps();
+            }
+            pb.addAllowedIps(allowedIps);
+
+            if (peer.getEndpoint().isPresent())
+                pb.setEndpoint(peer.getEndpoint().get());
+            if (peer.getPersistentKeepalive().isPresent())
+                pb.setPersistentKeepalive(peer.getPersistentKeepalive().get());
+            if (peer.getPreSharedKey().isPresent())
+                pb.setPreSharedKey(peer.getPreSharedKey().get());
+            cb.addPeer(pb.build());
+        }
+        return cb.build();
+    }
+
+    private static List<InetNetwork> parseRoutes(Context context, String routes)
+            throws IllegalArgumentException {
+        List<InetNetwork> parsed = new ArrayList<>();
+        if (routes == null)
+            return parsed;
+        for (String route : routes.split("[,\\s]+")) {
+            if (route.isEmpty())
+                continue;
+            try {
+                parsed.add(InetNetwork.parse(route));
+            } catch (ParseException e) {
+                throw new IllegalArgumentException(
+                        context.getString(R.string.wireguard_routes_invalid, route), e);
+            }
+        }
+        return parsed;
     }
 
     public static synchronized void disconnect(Context context) {

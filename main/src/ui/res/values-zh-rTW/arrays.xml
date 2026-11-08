@@ -48,4 +48,9 @@
         <item>preferred（建議但相容性有限）</item>
         <item>Suite B（僅 NIST 認可的橢圓曲線）</item>
     </string-array>
+    <string-array name="wireguard_routing_modes">
+        <item>使用設定中的 AllowedIPs（預設）</item>
+        <item>不覆蓋預設路由（僅保留設定中的網段）</item>
+        <item>自訂路由（僅使用下方網段）</item>
+    </string-array>
 </resources>

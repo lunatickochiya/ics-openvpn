@@ -4,7 +4,7 @@
   ~ Distributed under the GNU GPL v2 with additional terms. For full terms see the file doc/LICENSE.txt
   -->
 <resources>
-    <string name="app">OutHome</string>
+    <string name="app">Kizuna</string>
     <string name="address">伺服器位址：</string>
     <string name="port">伺服器連接埠：</string>
     <string name="location">位置</string>
@@ -457,7 +457,7 @@
     <string name="editor_close_profile_changed">配置已在編輯器外被修改，正在關閉配置編輯器。</string>
     <string name="encrypt_profiles">加密配置文件</string>
     <string name="encrypt_profiles_summary">嘗試在存儲中加密配置文件（如果 Android 系統支持）</string>
-    <string name="faq_killswitch">人們常常希望在沒有 VPN 時阻止網絡連接。其他應用常把此功能包裝成“Killswitch”或“無縫隧道”等營銷術語。OpenVPN 和本應用提供 persist-tun 功能來實現此目的。&lt;p&gt;問題在於，應用提供的所有這些方法都只能盡力而為，並非完整解決方案。在開機、應用崩潰及其他邊界情況下，應用無法確保阻止非 VPN 連接，這會給用戶虛假的安全感。&lt;p&gt;&lt;b&gt;唯一&lt;/b&gt;可靠的阻止非 VPN 連接的方法是使用 Android 8.0 或更高版本，並開啟“阻止無 VPN 的連接”設置。該設置位於“設置 > 網絡和互聯網 > 高級/VPN > OutHome > 啟用始終開啟 VPN、啟用阻止無 VPN 的連接”。</string>
+    <string name="faq_killswitch">人們常常希望在沒有 VPN 時阻止網絡連接。其他應用常把此功能包裝成“Killswitch”或“無縫隧道”等營銷術語。OpenVPN 和本應用提供 persist-tun 功能來實現此目的。&lt;p&gt;問題在於，應用提供的所有這些方法都只能盡力而為，並非完整解決方案。在開機、應用崩潰及其他邊界情況下，應用無法確保阻止非 VPN 連接，這會給用戶虛假的安全感。&lt;p&gt;&lt;b&gt;唯一&lt;/b&gt;可靠的阻止非 VPN 連接的方法是使用 Android 8.0 或更高版本，並開啟“阻止無 VPN 的連接”設置。該設置位於“設置 > 網絡和互聯網 > 高級/VPN > Kizuna > 啟用始終開啟 VPN、啟用阻止無 VPN 的連接”。</string>
     <string name="faq_killswitch_title">阻止非 VPN 連接（“Killswitch”）</string>
     <string name="faq_ncp">根據具體情況，此消息會有一些變化，但共同點是服務器和客戶端無法就共同的加密算法達成一致。主要原因有：&lt;ul&gt;&lt;li&gt; 你仍依賴 OpenVPN 2.4 及更早版本在默認配置中允許 BF-CBC 的行為（未設置 --cipher 時）。OpenVPN 2.5 默認不再允許它，因為它是一種&lt;a href="https://community.openvpn.net/openvpn/wiki/SWEET32"&gt;已破解/過時的加密算法&lt;/a&gt;。&lt;/li&gt;&lt;li&gt;服務器使用 OpenVPN 2.3（或更早版本）並啟用了 --enable-small（至少 4-5 年前的 OpenVPN）&lt;/li&gt;&lt;li&gt;&lt;/ul&gt;配置損壞（例如客戶端和服務器上的 data-ciphers 不匹配）&lt;/li&gt; &lt;p&gt; &lt;a href="https://github.com/OpenVPN/openvpn/blob/master/doc/man-sections/cipher-negotiation.rst"&gt;OpenVPN 手冊中關於加密協商的章節&lt;/a&gt; 很好地解釋了加密協商的不同場景以及應對方法。&lt;p&gt;TP-Link 設備即使 2019/2020 款也使用至少 5 年前的 OpenVPN 2.3.x（可能更舊）。&lt;p&gt;最後，還有一個流行的 VPN 提供商，其服務器有問題，總是聲稱使用 \'BF-CBC\'，因為其開發者認為製作一個與標準 OpenVPN 不兼容的專有加密協商補丁是個好主意。&lt;p&gt;總結：所有合理的配置都不應出現這些錯誤。但（除了那家有問題 VPN 提供商的服務器外）可以通過兼容模式讓客戶端仍然連接（這只是解決表面症狀，而非真正問題）。連接舊服務器時，VPN 基本設置中的兼容模式選項應能解決大多數常見兼容性問題。</string>
     <string name="fingerprint">（輸入服務器證書的 SHA256 指紋）</string>
@@ -523,4 +523,15 @@
     <string name="wireguard_disconnect">斷開連接</string>
     <string name="wireguard_notification_channel">WireGuard 連接</string>
     <string name="wireguard_notification_channel_description">顯示當前 WireGuard 隧道狀態</string>
+    <string name="wireguard_help">使用說明：\n1. 匯入或貼上 wg-quick 設定（包含 [Interface] 和 [Peer]）。\n2. 路由模式：預設使用設定中的 AllowedIPs；「不覆蓋預設路由」會移除 0.0.0.0/0 與 ::/0，只保留設定中的其他網段；「自訂路由」僅使用下方填寫的網段。\n3. 點擊「選擇使用 VPN 的應用」可指定僅部分應用使用 VPN，或排除部分應用。\n4. 儲存後點擊該設定即可連線。\n\n提示：也可以直接在設定中加入 IncludedApplications = 套件名稱（逗號分隔）來指定應用；ExcludedApplications 用於排除應用。</string>
+    <string name="wireguard_routing_mode">路由模式</string>
+    <string name="wireguard_custom_routes_hint">自訂路由，CIDR 格式，逗號或空格分隔，例如 192.168.1.0/24, 10.0.0.0/8</string>
+    <string name="wireguard_select_apps">選擇使用 VPN 的應用</string>
+    <string name="wireguard_help_button">使用說明</string>
+    <string name="wireguard_apps_all">應用範圍：全部應用（可排除）</string>
+    <string name="wireguard_apps_selected">應用範圍：僅選定的 %1$d 個應用</string>
+    <string name="wireguard_apps_title">選擇使用 VPN 的應用</string>
+    <string name="wireguard_routes_missing">請填寫自訂路由</string>
+    <string name="wireguard_routes_invalid">路由格式無效：%1$s</string>
+    <string name="wireguard_no_apps_selected">已選擇「僅選定應用使用 VPN」，但沒有選擇任何應用</string>
 </resources>

@@ -139,9 +139,13 @@ internal class PackageAdapter(c: Context, vp: VpnProfile) : RecyclerView.Adapter
 
         val vpnAllowBypassSwitch = settingsView.findViewById<View>(R.id.allow_bypass) as Switch
 
-        vpnAllowBypassSwitch.setOnCheckedChangeListener { _, isChecked -> mProfile.mAllowAppVpnBypass = isChecked }
-
-        vpnAllowBypassSwitch.isChecked = mProfile.mAllowAppVpnBypass
+        // WireGuard does not use the OpenVPN app-bypass option.
+        if (mProfile.isWireguard()) {
+            vpnAllowBypassSwitch.visibility = View.GONE
+        } else {
+            vpnAllowBypassSwitch.setOnCheckedChangeListener { _, isChecked -> mProfile.mAllowAppVpnBypass = isChecked }
+            vpnAllowBypassSwitch.isChecked = mProfile.mAllowAppVpnBypass
+        }
     }
 
     fun bindViewApp(position: Int, viewHolder: AppViewHolder){

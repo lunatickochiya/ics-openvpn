@@ -36,7 +36,7 @@ android {
     ndkVersion = "30.0.14904198"
 
     defaultConfig {
-        applicationId = "com.outhome"
+        applicationId = "com.lunakizuna"
         // The WireGuard tunnel library requires API 24
         minSdk = 24
         targetSdk = 37

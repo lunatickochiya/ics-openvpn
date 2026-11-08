@@ -4,9 +4,9 @@ The release build is signed with a private keystore that is **not** committed to
 repository. Gradle reads the signing configuration from the usual project properties:
 
 ```properties
-keystoreFile=/absolute/path/to/outhome-release.jks
+keystoreFile=/absolute/path/to/kizuna-release.jks
 keystorePassword=...
-keystoreAlias=outhome
+keystoreAlias=kizuna
 keystoreAliasPassword=...
 ```
 
@@ -18,18 +18,18 @@ The `Build and Release` workflow expects these repository secrets:
 
 | Secret | Value |
 | --- | --- |
-| `OUTHOME_KEYSTORE_BASE64` | Base64 encoding of the PKCS12 keystore |
-| `OUTHOME_KEYSTORE_PASSWORD` | Keystore password |
-| `OUTHOME_KEY_ALIAS` | Key alias (`outhome`) |
-| `OUTHOME_KEY_PASSWORD` | Key password |
+| `KIZUNA_KEYSTORE_BASE64` | Base64 encoding of the PKCS12 keystore |
+| `KIZUNA_KEYSTORE_PASSWORD` | Keystore password |
+| `KIZUNA_KEY_ALIAS` | Key alias (`kizuna`) |
+| `KIZUNA_KEY_PASSWORD` | Key password |
 
 Example of setting them with the GitHub CLI:
 
 ```sh
-base64 -w0 outhome-release.jks | gh secret set OUTHOME_KEYSTORE_BASE64
-gh secret set OUTHOME_KEYSTORE_PASSWORD --body '...'
-gh secret set OUTHOME_KEY_ALIAS --body 'outhome'
-gh secret set OUTHOME_KEY_PASSWORD --body '...'
+base64 -w0 kizuna-release.jks | gh secret set KIZUNA_KEYSTORE_BASE64
+gh secret set KIZUNA_KEYSTORE_PASSWORD --body '...'
+gh secret set KIZUNA_KEY_ALIAS --body 'kizuna'
+gh secret set KIZUNA_KEY_PASSWORD --body '...'
 ```
 
 ## Releases

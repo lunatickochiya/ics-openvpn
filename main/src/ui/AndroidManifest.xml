@@ -61,6 +61,10 @@
                 android:exported="false"
                 android:windowSoftInputMode="stateHidden" />
 
+        <activity
+                android:name=".activities.WireGuardAppsActivity"
+                android:exported="false" />
+
         <activity android:name=".activities.FileSelect" />
         <service
                 android:exported="true"
