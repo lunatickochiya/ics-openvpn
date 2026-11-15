@@ -5,6 +5,8 @@
 <resources>
     <string name="app">Kizuna</string>
     <string name="wireguard">WireGuard</string>
+    <string name="add_openvpn_profile">OpenVPN 配置</string>
+    <string name="add_wireguard_profile">WireGuard 配置</string>
     <string name="wireguard_config_title">WireGuard 配置</string>
     <string name="wireguard_config_hint">在此粘贴 wg-quick 配置（包含 [Interface] 和 [Peer] 段）</string>
     <string name="wireguard_config_save">保存</string>
@@ -406,6 +408,9 @@
     <string name="pw_request_dialog_prompt">请输入 %1$s 配置的密码</string>
     <string name="menu_use_inline_data">使用行内（inline）数据</string>
     <string name="export_config_chooser_title">导出配置</string>
+    <string name="export_config_file">导出配置文件</string>
+    <string name="export_config_success">配置已导出</string>
+    <string name="export_config_error">导出配置失败：%1$s</string>
     <string name="missing_tlsauth">缺少 tls-auth 文件</string>
     <string name="missing_certificates">缺少用户证书或用户证书密钥文件</string>
     <string name="crl_title">证书撤销清单（CRL）（可选）</string>

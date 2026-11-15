@@ -7,6 +7,7 @@ package de.blinkt.openvpn.activities
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -16,12 +17,19 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import com.wireguard.config.Config
 import com.wireguard.config.InetNetwork
 import de.blinkt.openvpn.R
 import de.blinkt.openvpn.VpnProfile
 import de.blinkt.openvpn.core.ProfileManager
+import de.blinkt.openvpn.core.VpnStatus
+import de.blinkt.openvpn.wireguard.WireGuardManager
 import java.io.ByteArrayInputStream
+import java.io.IOException
+import java.io.OutputStream
+import java.nio.charset.StandardCharsets
 import java.util.HashSet
 
 /**
@@ -33,6 +41,8 @@ class WireGuardConfigActivity : BaseActivity() {
     private lateinit var mRoutingMode: Spinner
     private lateinit var mCustomRoutes: EditText
     private lateinit var mAppsSummary: TextView
+    private lateinit var mExportLauncher: ActivityResultLauncher<String>
+    private var mPendingExportText: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +57,10 @@ class WireGuardConfigActivity : BaseActivity() {
         mProfile = profile
         if (mProfile.mAllowedAppsVpn == null)
             mProfile.mAllowedAppsVpn = HashSet()
+
+        mExportLauncher = registerForActivityResult(
+            ActivityResultContracts.CreateDocument("text/plain")
+        ) { uri -> writeConfigToUri(uri) }
 
         setTitle(R.string.wireguard_config_title)
         val rootView = layoutInflater.inflate(R.layout.wireguard_config, null)
@@ -92,6 +106,8 @@ class WireGuardConfigActivity : BaseActivity() {
                 .show()
         }
 
+        findViewById<Button>(R.id.wireguard_export_config).setOnClickListener { prepareExport() }
+
         findViewById<Button>(R.id.wireguard_config_save).setOnClickListener { save() }
         updateCustomRoutesState(mRoutingMode.selectedItemPosition)
     }
@@ -116,6 +132,56 @@ class WireGuardConfigActivity : BaseActivity() {
             getString(R.string.wireguard_apps_all)
         else
             getString(R.string.wireguard_apps_selected, count)
+    }
+
+    private fun prepareExport() {
+        val text = mEditor.text.toString()
+        if (text.isBlank()) {
+            Toast.makeText(this, R.string.wireguard_config_missing, Toast.LENGTH_LONG).show()
+            return
+        }
+
+        val temp = mProfile.copy(mProfile.name) ?: mProfile
+        temp.mWireguardConfig = text
+        temp.mWireguardRoutingMode = mRoutingMode.selectedItemPosition.coerceIn(0, 2)
+        temp.mWireguardCustomRoutes = mCustomRoutes.text.toString().trim()
+
+        try {
+            mPendingExportText = WireGuardManager.buildExportConfig(this, temp)
+        } catch (e: Exception) {
+            Toast.makeText(
+                this,
+                getString(R.string.export_config_error, e.localizedMessage ?: e.toString()),
+                Toast.LENGTH_LONG
+            ).show()
+            return
+        }
+
+        var name = mProfile.getName().replace(Regex("[^\\p{L}\\p{N}._-]+"), "_")
+        if (name.isEmpty())
+            name = "wireguard"
+        mExportLauncher.launch("$name.conf")
+    }
+
+    private fun writeConfigToUri(uri: Uri?) {
+        if (uri == null)
+            return
+        val exported = mPendingExportText ?: return
+        try {
+            contentResolver.openOutputStream(uri).use { out ->
+                if (out == null)
+                    throw IOException("Cannot open output stream")
+                out.write((exported.trim() + "\n").toByteArray(StandardCharsets.UTF_8))
+            }
+            Toast.makeText(this, R.string.export_config_success, Toast.LENGTH_SHORT).show()
+        } catch (e: IOException) {
+            VpnStatus.logException("Export WireGuard config", e)
+            Toast.makeText(
+                this,
+                getString(R.string.export_config_error, e.localizedMessage ?: e.toString()),
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
     private fun save() {

@@ -327,6 +327,10 @@ class VPNProfileList : ListFragment(), View.OnClickListener, StateListener {
             .setTitleCondensed(getActivity()!!.getString(R.string.add))
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
 
+        menu.add(0, MENU_ADD_WIREGUARD, 0, R.string.add_wireguard_profile)
+            .setIcon(R.drawable.ic_baseline_add_circle_outline_24)
+            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
+
         menu.add(0, MENU_IMPORT_PROFILE, 0, R.string.menu_import)
             .setIcon(R.drawable.ic_menu_import)
             .setAlphabeticShortcut('i')
@@ -350,6 +354,9 @@ class VPNProfileList : ListFragment(), View.OnClickListener, StateListener {
         val itemId = item.getItemId()
         if (itemId == MENU_ADD_PROFILE) {
             onAddOrDuplicateProfile(null)
+            return true
+        } else if (itemId == MENU_ADD_WIREGUARD) {
+            showAddProfileDialog(null, true)
             return true
         } else if (itemId == MENU_IMPORT_PROFILE) {
             return startImportConfigFilePicker()
@@ -419,14 +426,42 @@ class VPNProfileList : ListFragment(), View.OnClickListener, StateListener {
     }
 
     private fun onAddOrDuplicateProfile(mCopyProfile: VpnProfile?) {
+        if (mCopyProfile == null) {
+            showAddProfileTypeDialog()
+        } else {
+            showAddProfileDialog(mCopyProfile, false)
+        }
+    }
+
+    private fun showAddProfileTypeDialog() {
+        val context: Context = getActivity() ?: return
+        AlertDialog.Builder(context)
+            .setTitle(R.string.menu_add_profile)
+            .setItems(
+                arrayOf<CharSequence>(
+                    getString(R.string.add_openvpn_profile),
+                    getString(R.string.add_wireguard_profile)
+                )
+            ) { _: DialogInterface?, which: Int ->
+                showAddProfileDialog(null, which == 1)
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    private fun showAddProfileDialog(mCopyProfile: VpnProfile?, wireguard: Boolean) {
         val context: Context? = getActivity()
         if (context != null) {
             val entry = EditText(context)
             entry.setSingleLine()
             entry.setContentDescription(getString(R.string.name_of_the_vpn_profile))
+            if (wireguard)
+                entry.setText(getString(R.string.wireguard))
 
             val dialog = AlertDialog.Builder(context)
-            if (mCopyProfile == null) dialog.setTitle(R.string.menu_add_profile)
+            if (mCopyProfile == null) dialog.setTitle(
+                if (wireguard) R.string.add_wireguard_profile else R.string.menu_add_profile
+            )
             else {
                 dialog.setTitle(
                     context.getString(
@@ -454,7 +489,13 @@ class VPNProfileList : ListFragment(), View.OnClickListener, StateListener {
                         // Remove restrictions on copy profile
                         profile.mProfileCreator = null
                         profile.mUserEditable = true
-                    } else profile = VpnProfile(name)
+                    } else {
+                        profile = VpnProfile(name)
+                        if (wireguard) {
+                            profile.mUseWireguard = true
+                            profile.mAllowedAppsVpnAreDisallowed = true
+                        }
+                    }
 
                     addProfile(profile)
                     editVPN(profile)
@@ -646,6 +687,7 @@ class VPNProfileList : ListFragment(), View.OnClickListener, StateListener {
         // Shortcut version is increased to refresh all shortcuts
         const val SHORTCUT_VERSION: Int = 1
         private val MENU_ADD_PROFILE = Menu.FIRST
+        private val MENU_ADD_WIREGUARD = Menu.FIRST + 10
         private const val EDIT_VPN_CONFIG = 92
         private const val SELECT_PROFILE = 43
         private const val IMPORT_PROFILE = 231

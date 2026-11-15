@@ -20,4 +20,20 @@
     </ScrollView>
 
     <include layout="@layout/share_fab" />
+
+    <ImageButton
+        android:id="@+id/export_config"
+        android:layout_width="@dimen/round_button_diameter"
+        android:layout_height="@dimen/round_button_diameter"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:background="@drawable/oval_ripple"
+        android:contentDescription="@string/export_config_file"
+        android:elevation="1dp"
+        android:src="@drawable/ic_baseline_file_present_24"
+        android:tint="@android:color/white"
+        android:visibility="invisible" />
+
 </RelativeLayout>

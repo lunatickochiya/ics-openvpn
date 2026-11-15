@@ -359,6 +359,9 @@
     <string name="pw_request_dialog_prompt">請輸入 %1$s 設定檔的密碼</string>
     <string name="menu_use_inline_data">使用行內（inline）資料</string>
     <string name="export_config_chooser_title">匯出設定檔</string>
+    <string name="export_config_file">匯出設定檔</string>
+    <string name="export_config_success">設定已匯出</string>
+    <string name="export_config_error">匯出設定失敗：%1$s</string>
     <string name="missing_tlsauth">缺少 tls-auth 檔案</string>
     <string name="missing_certificates">缺少使用者憑證或使用者憑證金鑰檔案</string>
     <string name="crl_title">憑證撤銷清單（CRL）（可選）</string>
@@ -507,6 +510,8 @@
     <string name="weakmd">&lt;p&gt;從 OpenSSL 1.1 開始，OpenSSL 會拒絕證書中的弱簽名（如 MD5）。此外，OpenSSL 3.0 也會拒絕 SHA1 簽名。&lt;/p&gt;&lt;p&gt; 應儘快更新 VPN 證書，因為 SHA1 在不久的將來也會在其他平臺上失效。&lt;/p&gt;
         &lt;p&gt;如果你確實要使用陳舊且不安全的證書，請在配置的“認證/加密”下將 TLS 安全配置選擇為“insecure”&lt;/p&gt;</string>
     <string name="wireguard">WireGuard</string>
+    <string name="add_openvpn_profile">OpenVPN 設定</string>
+    <string name="add_wireguard_profile">WireGuard 設定</string>
     <string name="wireguard_config_title">WireGuard 配置</string>
     <string name="wireguard_config_hint">在此粘貼 wg-quick 配置（包含 [Interface] 和 [Peer] 段）</string>
     <string name="wireguard_config_save">保存</string>

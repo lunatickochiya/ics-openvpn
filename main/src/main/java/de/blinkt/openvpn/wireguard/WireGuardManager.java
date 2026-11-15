@@ -210,6 +210,16 @@ public final class WireGuardManager {
         return cb.build();
     }
 
+    /**
+     * Builds the effective wg-quick configuration including the profile's routing and
+     * per-application options. Used by the export function.
+     */
+    public static String buildExportConfig(Context context, VpnProfile profile) throws Exception {
+        Config config = Config.parse(new ByteArrayInputStream(
+                profile.mWireguardConfig.getBytes(StandardCharsets.UTF_8)));
+        return applyProfileOptions(context, profile, config).toWgQuickString();
+    }
+
     private static List<InetNetwork> parseRoutes(Context context, String routes)
             throws IllegalArgumentException {
         List<InetNetwork> parsed = new ArrayList<>();
